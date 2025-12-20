@@ -1,0 +1,167 @@
+#include <iostream>
+#include <vector>
+#include <unordered_set>
+#include <cstdlib>
+#include <climits>
+
+std::vector<int> generate_random_arr(int n)
+{
+    if(n==0)return std::vector<int>{};;
+
+    std::vector<int> arr(n);
+    for (int i = 0; i < n; ++i)
+        arr[i] = std::rand() % n;
+    return arr;
+}
+std::vector<int> generate_sorted_arr(int n)
+{
+    if(n==0)return std::vector<int>{};
+
+    std::vector<int> arr(n);
+    for (int i = 0; i < n; ++i)
+        arr[i] = i;
+    return arr;
+}
+void print_array(std::vector<int> &nums){
+    for(int i : nums){
+        std::cout<< i << ",";
+    }
+    std::cout<<"\n";
+}
+
+
+
+// O(n) , space-O(1)
+int largest_element(std::vector<int> &arr )
+{
+    int max = INT_MIN;
+    int n = arr.size();
+    for(int i =0 ;i<n;i++){
+        max = std::max(arr[i],max);
+    }
+    return max;
+}
+int second_largest_element(std::vector<int> &arr)
+{
+    int largest=INT_MIN,second ;
+    int n = arr.size();
+    for(int i =0 ;i<n;i++){
+        if(arr[i] > largest){
+            second = largest;
+            largest = arr[i];
+        }else if(arr[i]> second){
+            second = arr[i];
+        }
+    }
+    return second;
+}
+
+int n_th_largest_element(std::vector<int> &arr)
+{
+    //HOMWORK LOGIC
+}
+
+
+//O(n)
+bool check_sorted_array(std::vector<int> &arr){
+    //INBUILT OPTION
+    // #include <algorithm>
+    // return std::is_sorted(arr.begin(), arr.end());
+
+    //best way cant go less than O[n]
+    int n = arr.size();
+    for (int i =0 ; i<n-1 ; i++)
+    {
+        if(arr[i+1]<arr[i])return false;
+    }
+    return true;
+}
+
+int remove_duplicates_in_sorted_brute(std::vector<int>& nums) {
+        // Unordered set to store elements we have already seen
+        std::unordered_set<int> seen;
+
+        // Index where the next unique element will be written
+        int index = 0;
+
+        // Loop over each element in the array
+        for (int num : nums) {
+            // If num is not in seen, it's unique
+            if (seen.find(num) == seen.end()) {
+                // Add this num to the set of seen numbers
+                seen.insert(num);
+
+                // Overwrite nums[index] with this unique num
+                nums[index] = num;
+
+                // Move index forward
+                index++;
+            }
+        }
+        // Return count of unique elements
+        return index;
+}
+
+int remove_duplicates_in_sorted_better(std::vector<int> &nums){
+    int n = nums.size();
+    int k =n;
+    for(int i =0 ; i < k-1 ;i++){
+        int next = i+1;
+        if(nums[next] == nums[i]){
+            k--;
+            while(next<n){
+                nums[next]=nums[next+1];
+                next++;
+            }
+        }
+    }
+    return k;
+}
+
+int remove_duplicates_in_sorted_optimal(std::vector<int> &nums){
+    int n = nums.size();
+    int filtered = 0;
+    for(int i =1 ; i < n ;i++){
+        if( nums[filtered] != nums[i]){
+            filtered++;
+            nums[filtered]=nums[i];
+        }
+    }
+    return filtered+1;
+}
+
+
+// https://leetcode.com/problems/check-if-array-is-sorted-and-rotated/submissions/1851923132/
+bool check_sorted_rotated_array(std::vector<int> &arr)
+{
+    int n = arr.size();
+    if (n < 2) return true;
+
+    int found_start = 0;
+    int max ;
+    for (int i =0 ; i<n ; i++)
+    {
+        int next = arr[(i+1)%n] ;
+        if(next < arr[i] ){
+            found_start++;
+            if(found_start > 1){
+                return false;
+            }
+        }
+           
+    }
+    return true;
+}
+
+
+
+
+
+int main(){
+    auto arr = std::vector<int>{1,1,3,4,4,5,6,6};
+    int k = remove_duplicates_in_sorted_optimal(arr);
+    print_array(arr);
+    std::cout<<k;
+    return 0;
+}
+
