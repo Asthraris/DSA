@@ -1,9 +1,10 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <unordered_set>
 #include <cstdlib>
 #include <climits>
-
+//----------------------------------------------------------------------------------------------------
 std::vector<int> generate_random_arr(int n)
 {
     if(n==0)return std::vector<int>{};;
@@ -28,9 +29,12 @@ void print_array(std::vector<int> &nums){
     }
     std::cout<<"\n";
 }
+//----------------------------------------------------------------------------------------------------
 
 
 
+
+//----------------------------------------------------------------------------------------------------
 // O(n) , space-O(1)
 int largest_element(std::vector<int> &arr )
 {
@@ -60,8 +64,12 @@ int n_th_largest_element(std::vector<int> &arr)
 {
     //HOMWORK LOGIC
 }
+//----------------------------------------------------------------------------------------------------
 
 
+
+
+//----------------------------------------------------------------------------------------------------
 //O(n)
 bool check_sorted_array(std::vector<int> &arr){
     //INBUILT OPTION
@@ -76,6 +84,7 @@ bool check_sorted_array(std::vector<int> &arr){
     }
     return true;
 }
+// ----------------------------------------------------------------------------------------------------
 
 int remove_duplicates_in_sorted_brute(std::vector<int>& nums) {
         // Unordered set to store elements we have already seen
@@ -129,8 +138,11 @@ int remove_duplicates_in_sorted_optimal(std::vector<int> &nums){
     }
     return filtered+1;
 }
+// ----------------------------------------------------------------------------------------------------
 
 
+
+// ----------------------------------------------------------------------------------------------------
 // https://leetcode.com/problems/check-if-array-is-sorted-and-rotated/submissions/1851923132/
 bool check_sorted_rotated_array(std::vector<int> &arr)
 {
@@ -152,16 +164,82 @@ bool check_sorted_rotated_array(std::vector<int> &arr)
     }
     return true;
 }
+// ----------------------------------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------------------------------
+
+void left_rotate_array(std::vector<int> &arr){
+    if (arr.empty()) return;
+// --------------------------------------------------
+    // std::rotate(first, middle, last) 
+    // This moves the element at 'middle' to the 'first' position.
+    // std::rotate(arr.begin(), arr.begin() + 1, arr.end());
+// --------------------------------------------------
+    
+    int n = arr.size();
+    // Store the first element in a temporary variable
+    int temp = arr[0];
+    // shift the loop till n-1 elements
+    for(int i=1;i<n;i++){
+        arr[i-1]=arr[i];
+    }
+    // Place the first element at the end
+    arr[n-1]=temp;
+}
+// ----------------------------------------------------------------------------------------------------
+//brute O(k*n)
+void right_rotate_k_brute(std::vector<int> &arr , int k ){
+    // if(arr.empty())return;
+    if (k<=0)return;
+
+    int n = arr.size()-1;
+    //right rotate as uasual
+    int temp = arr[n];
+    for(int i = n; i>0;i--){
+        arr[i] = arr[i-1];
+    }
+    arr[0] = temp;
+
+    //Recursion
+    //WELL I M AN IDIOT FOR USING POSTORDER OPERATOR MAKING IT LOOP TILL END CAUSING SEGMENTATION EXCEPTION
+    right_rotate_k_brute(arr,k-1);
+
+}
+
+//better? 
+void rotate_k(std::vector<int> & arr , int k , bool rotation=1 ){
+    // https://takeuforward.org/data-structure/rotate-array-by-k-elements
+
+    //agar n<k so step kam karne ke liye
+    k=k % arr.size();
+
+    //if rotation is right =1 reverse first
+    if(rotation){
+        //STD::REVERSE COMES IN ALGORITHM HEADER
+        std::reverse(arr.begin(),arr.end());
+        
+        //COMPILER KO PATA HOTA HAI KE K IS NEXT K INDEX !SMART BOY
+        // mai kab se arr.begin()+ k*size_of_single_element to access kth elemth kar raha tha
+        std::reverse(arr.begin(),arr.begin()+k);
+        std::reverse(arr.begin()+k,arr.end());
+    }else{
+        std::reverse(arr.begin(),arr.begin()+k);
+        std::reverse(arr.begin()+k,arr.end());
+        std::reverse(arr.begin(),arr.end());
+    }
+}
 
 
+
+// ----------------------------------------------------------------------------------------------------
 
 
 
 int main(){
-    auto arr = std::vector<int>{1,1,3,4,4,5,6,6};
-    int k = remove_duplicates_in_sorted_optimal(arr);
+    auto arr = std::vector<int>{1,2,3,4,5};
+    rotate_k(arr,2);
     print_array(arr);
-    std::cout<<k;
+    // std::cout<<k;
     return 0;
 }
 
