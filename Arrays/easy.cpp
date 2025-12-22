@@ -206,7 +206,7 @@ void right_rotate_k_brute(std::vector<int> &arr , int k ){
 
 }
 
-//better? 
+//better=https://leetcode.com/problems/rotate-array/
 void rotate_k(std::vector<int> & arr , int k , bool rotation=1 ){
     // https://takeuforward.org/data-structure/rotate-array-by-k-elements
 
@@ -234,12 +234,99 @@ void rotate_k(std::vector<int> & arr , int k , bool rotation=1 ){
 // ----------------------------------------------------------------------------------------------------
 
 
+// ----------------------------------------------------------------------------------------------------
+// Move zeros https://leetcode.com/problems/move-zeroes/description/
+
+void move_zeros_till_end_brute(std::vector<int> &arr){
+    int n = arr.size();
+    if(n<=1)return;
+    // init an vec with n size and 0 default value set
+    std::vector<int> temp(n,0);
+    int indx = 0;
+
+    for(int i = 0 ;i<n;i++){
+        if(arr[i] != 0 ){
+            temp[indx] = arr[i];
+            indx++;
+        }
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        arr[i]=temp[i];
+    }
+}
+
+
+void move_zeros_till_end(std::vector<int> &arr){
+    int n = arr.size();
+    if(n<=1)return;
+    //my logic first but it has an defect of not maintaining order of array
+    
+    // for(int i =0 ; i<filled_back;i++){
+    //     if(arr[i]==0){
+    //         std::swap(arr[i],arr[filled_back]);
+    //         filled_back--;
+    //         i--;
+    //     }
+    // }
+
+
+    int first_zero=-1;
+    
+    for (int i = 0; i < n; i++)
+    {
+        if(arr[i]==0){
+            first_zero=i;
+            break;
+        }   
+    }
+    if(first_zero <0)return;
+
+    for (int i = first_zero+1; i < n; i++)
+    {
+        if(arr[i] != 0){
+            std::swap(arr[first_zero],arr[i]);
+            first_zero++;
+        }
+    }
+}
+
+void move_zeros_till_end_mine(std::vector<int> &arr){
+    // int n = arr.size();
+    // if(n<=1)return;
+
+    // int lp =-1,rp=0;
+    // while(rp>n){
+    //     if(arr[rp]==0){
+    //         lp = rp;
+    //     }else if {
+    //         std::
+    //     }
+    //     rp++;
+    // }
+}
+// ----------------------------------------------------------------------------------------------------
+
+
+int linear_search(std::vector<int> &nums,int key){
+    int n = nums.size();
+    for(int curr=0 ;curr<n ; curr++){
+        if(nums[curr] ==key)return curr;
+    }
+    return -1;
+}
+
+// ----------------------------------------------------------------------------------------------------
+
+
+
 
 int main(){
-    auto arr = std::vector<int>{1,2,3,4,5};
-    rotate_k(arr,2);
-    print_array(arr);
-    // std::cout<<k;
+    auto arr = std::vector<int>{1 ,0 ,2 ,3 ,0 ,4 ,0 ,1,};
+    int res =linear_search(arr ,1);
+    // print_array(arr);
+    std::cout<<res;
     return 0;
 }
 
