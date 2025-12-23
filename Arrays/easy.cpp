@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <set>
 #include <algorithm>
 #include <unordered_set>
 #include <cstdlib>
@@ -319,12 +320,102 @@ int linear_search(std::vector<int> &nums,int key){
 
 // ----------------------------------------------------------------------------------------------------
 
+//assuming both arrays are sorted
+std::vector<int> union_two_arr_optimal(std::vector<int> &arr1,std::vector<int> &arr2){
+    
+    int n1 = arr1.size();
+    int n2 = arr2.size();
+
+    if (arr1.empty())return arr2;
+    if (arr2.empty())return arr1;
+
+    std::vector<int> un;
+    int ind1=0,ind2=0;
+
+    while(ind1 < n1 && ind2 < n2){
+        
+        //ERROR: if arr1[ind1] is the smaller element but it is a duplicate (meaning arr1[ind1] == last), the entire if condition becomes false. Because the increment ind1++ is inside the curly braces, it never runs. The pointer stays stuck on the same element forever.
+        if(arr1[ind1] < arr2[ind2] ){
+            //agar un khalli nhi hoga than ya condition check or else neglect
+            if(un.empty() ||un.back() != arr1[ind1]){
+                un.push_back(arr1[ind1]);
+            }
+            ind1++;
+        }
+        else if (arr1[ind1] > arr2[ind2] ){
+            if(un.empty() ||un.back() != arr2[ind2]){
+                un.push_back(arr2[ind2]);
+            }
+            ind2++;
+        }
+        else{
+            //if both are same
+            if(un.empty() ||un.back() != arr1[ind1]){
+                un.push_back(arr1[ind1]);
+            }
+            ind1++;
+            ind2++;
+        }
+    }
+    
+    //copying rest data
+    while(ind1 <n1){
+        if(un.back() != arr1[ind1])un.push_back(arr1[ind1]);
+        ind1++;
+    }
+    while(ind2 <n2){
+        if(un.back() != arr2[ind2])un.push_back(arr2[ind2]);
+        ind2++;
+    }
+    return un;
+}
+
+std::vector<int> union_two_arr_set(std::vector<int> &arr1,std::vector<int> &arr2){
+    std::set<int> un;
+    for(int & i : arr1){
+        un.insert(i);
+    }
+    for(int & i : arr2){
+        un.insert(i);
+    }
+    return {un.begin(),un.end()};//this way c++ directly creates an vector from set directly being typecasted by return type
+}
+
+// ----------------------------------------------------------------------------------------------------
+
+
+//optimal for sorted
+int missing_value_sorted(std::vector<int> &nums,int n){
+    int count =1;
+    for(int &num :nums){
+        if(count != num){
+            return count;
+        }
+        count++;
+    }
+    return -1;
+}
+
+
+// https://leetcode.com/problems/missing-number/submissions/1863602640/
+int missing_value(std::vector<int> &nums){
+    int n = nums.size();
+    //assuming that missing value is replaced with 0
+    int ass_sum = (n*(n+1))/2;
+    int sum=0;
+    for(int& num :nums){
+        sum+=num;
+    }
+    return ass_sum-sum;
+}
+
+// ----------------------------------------------------------------------------------------------------
 
 
 
 int main(){
-    auto arr = std::vector<int>{1 ,0 ,2 ,3 ,0 ,4 ,0 ,1,};
-    int res =linear_search(arr ,1);
+    auto arr = std::vector<int>{1};
+    int res = missing_value(arr);
     // print_array(arr);
     std::cout<<res;
     return 0;
