@@ -1,8 +1,11 @@
-#include <iostream>
+#include <unordered_set>
 #include <vector>
 #include <set>
+
+
+
+#include <iostream>
 #include <algorithm>
-#include <unordered_set>
 #include <cstdlib>
 #include <climits>
 //----------------------------------------------------------------------------------------------------
@@ -411,11 +414,91 @@ int missing_value(std::vector<int> &nums){
 
 // ----------------------------------------------------------------------------------------------------
 
+int Maximum_Consecutive_One(std::vector<int> &nums){
+    if(nums.empty())return 0;
+    int n = nums.size();
+    int max_count = 0;
+    int count = 0;
+    
+    for(int i = 0 ; i <n ; i++){
+        if( nums[i]==1 ){
+            count++;
+            //here its better since is only chceking upon count getting update intead of everyloop
+            // if(max_count < count){
+            //     max_count = count;
+            // }
+            // use this instaed of above code for max 
+            max_count = std::max(max_count, count);//PROVEN FASTER THAN NORMAL IF WAY
+        }else{
+            count =0;
+
+        }
+    }
+    return max_count;
+}
+// ----------------------------------------------------------------------------------------------------
+
+//O[n^2]
+int find_imposter_brute(std::vector<int> &nums)
+{
+    int n = nums.size();
+    for(int i = 0 ;i <n ; i++){
+        int curr = nums[i];
+        int found_twin = false;
+        for(int j =0 ; j<n ; j++){
+
+            if (curr == nums[j] && i!=j){
+                found_twin=true;
+                break;
+            }
+        }
+        if(!found_twin)return curr;
+    }
+    return -1;
+}
+
+int find_imposter_counting(std::vector<int> &nums){
+    int n = nums.size();
+
+    //finding max so i can create an hashset with upperlimt as maximun element
+    //i know i should find a range in hash not just upper [  ;{   ]what if {999,998}?
+    int max = INT_MIN;
+    for(auto &nu :nums){
+        max = std::max(max+1,nu);
+    }
+    std::vector<int> temp(max,0);
+    for(auto &nu :nums){
+        temp[nu]++;
+    }
+
+    for(int i=0 ;i<temp.size();i++){
+        if(temp[i]==1)return i;
+    }
+
+    return -1;
+
+
+}
+
+int find_imposter_optimal(std::vector<int> &nums){
+    int n = nums.size();
+    int xorr =0;
+    // we know , n^n =0 whereas n^k = z and 0^n =n
+
+    for (int i = 0; i < n; i++)
+    {
+        xorr = xorr ^ nums[i];
+    }
+
+    return xorr;
+}
+
+// ----------------------------------------------------------------------------------------------------
 
 
 int main(){
-    auto arr = std::vector<int>{1};
-    int res = missing_value(arr);
+    auto arr = std::vector<int>{4,1,2,1,2};
+    int res = find_imposter_optimal(arr);
     // print_array(arr);
     std::cout<<res;
     return 0;
