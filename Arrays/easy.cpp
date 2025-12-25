@@ -412,6 +412,8 @@ int missing_value(std::vector<int> &nums){
     return ass_sum-sum;
 }
 
+
+
 // ----------------------------------------------------------------------------------------------------
 
 int Maximum_Consecutive_One(std::vector<int> &nums){
@@ -492,13 +494,67 @@ int find_imposter_optimal(std::vector<int> &nums){
 
     return xorr;
 }
+// ----------------------------------------------------------------------------------------------------
+
+// O[n^2]
+int longest_subseq_with_sum_brute(std::vector<int> &nums , int k )
+{
+    int n = nums.size();
+    int max_sub_len = 0;
+
+    for(int i = 0 ; i < n-1 ; i++){
+        int sum =nums[i];
+        int sub_len = 1;
+        //if that element is present in arr itself so 
+        if(sum == k )max_sub_len = std::max(max_sub_len , 1);
+
+        for(int j = i+1 ;j<n;j++ ){
+            if(sum +nums[j] > k ){
+                break;
+            }else if (sum + nums[j]==k){
+                max_sub_len = std::max(max_sub_len,++sub_len);//increament needed cause i am chck directly nums[j] adding
+                break;
+            }else{
+                sum += nums[j];
+                sub_len++;
+            }
+        }
+    }
+    return max_sub_len;
+}
+//two ptr
+int longest_subseq_with_sum_optimal(std::vector<int> &nums , int k )
+{
+    int n = nums.size();
+    int left = 0;
+    int right =0;
+
+    int max_sub_len = 0 ;
+
+    int sum = nums[left];
+    while(right < n ){
+        while(left<right && sum >k){
+            sum -=nums[left];
+            left++;
+        }
+        if (sum  == k){
+            max_sub_len = std::max(max_sub_len,right-left +1);
+        }
+        right ++;
+        if(right<n){
+            sum += nums[right];
+        }
+    }
+    return max_sub_len;
+
+}
 
 // ----------------------------------------------------------------------------------------------------
 
 
 int main(){
-    auto arr = std::vector<int>{4,1,2,1,2};
-    int res = find_imposter_optimal(arr);
+    auto arr = std::vector<int>{-1, 1, 1};
+    int res = longest_subseq_with_sum_optimal(arr , 1);
     // print_array(arr);
     std::cout<<res;
     return 0;
