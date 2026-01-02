@@ -1,1 +1,1 @@
-k*element_size
+right !=n && 
