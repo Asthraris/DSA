@@ -1,7 +1,9 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <algorithm>
 #include <cstdint>
+#include <cctype>
 
 std::string validParenthees(std::string paren = "()()")
 {
@@ -114,8 +116,40 @@ int rotatedCheck(std::string s = "goal", std::string t = "algo")
     return doubledS.find(t) != std::string::npos;
 }
 
+//i was think O^2 by checking each letter in another
+// different permutation of the letters in string
+bool isAmbigram_b(std::string s="lick" , std::string t="ilck"){
+    if(s.length() != t.length()){
+        return false;
+    }
+    std::sort(s.begin(),s.end());
+    std::sort(t.begin(),t.end());
+    for(int i = 0 ; i <s.length();i++){
+        if(s[i]!=t[i])return false;
+    }
+    return true;
+}
+
+bool isAmbigram(std::string s="lick" , std::string t="ilsk"){
+    if(s.length() != t.length()){
+        return false;
+    }
+    int freq[26]={0};
+    
+    for(int i =0 ; i <s.length();i++){
+        freq[(std::toupper((unsigned int)s[i]))-'A']++;
+    }
+    for(int i =0 ; i <t.length();i++){
+        freq[(std::toupper((unsigned int)t[i]))-'A']--;
+    }
+    for(const auto n:freq){
+        if(n!=0)return false;
+    }
+    return true;
+}
+
 int main()
 {
-    std::cout << "ans:" << rotatedCheck() << std::endl;
+    std::cout << "ans:" << isAmbigram() << std::endl;
     return 0;
 }
