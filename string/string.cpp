@@ -2,9 +2,11 @@
 #include <string>
 #include <unordered_map>
 #include <algorithm>
+#include <vector>
 #include <cstdint>
 #include <cctype>
-
+#include <climits>
+using namespace std;
 std::string validParenthees(std::string paren = "()()")
 {
     uint8_t level = 0;
@@ -148,8 +150,90 @@ bool isAmbigram(std::string s="lick" , std::string t="ilsk"){
     return true;
 }
 
+std::string sortFreq_GPT(std::string s = "treefuckkkk"){
+    std::unordered_map<char,int> freq_table;
+    for(char c :s)freq_table[c]++;
+    
+    std::vector<std::pair<char,int>> unsorted(freq_table.begin(),freq_table.end());
+    std::sort(unsorted.begin(),unsorted.end(),[](const auto &a , const auto &b){
+        return a.second >b.second;
+    });
+
+    std::string res;
+    for(const auto &p :unsorted){
+        res.append(p.second,p.first);
+    }
+    return res;
+}
+
+
+std::string sortFreq(std::string s = "treefuckkkk"){
+    int n = s.length();
+    //first we need to check freq with char;
+    std::unordered_map<char,int> freq_table;
+    for(char c:s)freq_table[c]++;
+
+    //then we need to arrange the frequencies , this time we gonna use bucket sort , also keep in mind that order of same freq doesnt matter
+    //we create bucket of frequency not the ASCII chars , so max lenth of bucket is n here not fixed 256
+    std::vector<std::string> bucket(n+1);
+    for(auto& p :freq_table){
+        //fill that char into the bucket 
+        //if same freq char exist its just going to append next char since the order doesnt matter here
+        bucket[p.second].push_back(p.first);
+    }
+
+    std::string res;
+    //we dont need i=0 since if freq=0 means no appearence
+    for(int i = n;i>=1;i--){
+        //iterating over each char in string here and filling them times of freq in res
+        for(char c :bucket[i]){
+                res.append(i,c);
+        }
+    }
+    return res;
+}
+
+int maxParenthetes(std::string s = "(1+(2*3)+((8)/4))+1"){
+    int max_level=0;
+    int curr_level =0;
+    for(char c :s){
+        if(c=='('){
+            curr_level++;
+            max_level = std::max(max_level,curr_level);
+        }else if(c ==')'){
+            curr_level--;
+        }
+    }
+    return max_level;
+}
+
+int myAtoi(std::string s = " -91283472332") {
+    int n = s.size();
+    int sign = 1;
+    long res=0;
+    int i =0;
+    while(i <n && s[i]==' '){
+        i++;
+    }
+
+    if(i<n && (s[i]=='+' || s[i]=='-')){
+        if(s[i]=='-')sign =-1;
+        i++;
+    }
+
+    while(i<n && std::isdigit(s[i])){
+        int digit = (s[i]-'0');
+        if (res > ((INT_MAX - digit) / 10))
+            return sign == 1 ? INT_MAX : INT_MIN;
+        res = res*10 + digit;
+
+        i++;
+    }
+    return sign*res;   
+}
+
 int main()
 {
-    std::cout << "ans:" << isAmbigram() << std::endl;
+    std::cout << "ans:" << myAtoi() << std::endl;
     return 0;
 }
