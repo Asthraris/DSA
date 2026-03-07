@@ -19,6 +19,7 @@ struct Node
 	}
 };
 
+
 Node *Vec2LL(std::vector<int> vec)
 {
     Node *Head = new Node(vec[0]);
@@ -33,10 +34,12 @@ Node *Vec2LL(std::vector<int> vec)
     return Head;
 }
 void printLL(Node* root){
+	std::cout<<"(HEAD) ";
 	while(root){
 		std::cout<<root->value<<" -> ";
 		root = root->next;
 	}
+	std::cout<<"NULL\n";
 }
 
 void DeleteNode(Node* root , int val){
@@ -177,12 +180,117 @@ Node* startingLoop(Node*head){
 	return nullptr;
 }
 
+int lengthLoopLL(Node* head){
+	Node *slow =head,*fast=head;
+	int ctr =0;
+	while(fast && fast->next){
+		fast = fast->next->next;
+		slow = slow->next;
+
+		if(fast==slow){
+			do{
+				fast = fast ->next;
+				ctr++;
+			}while(fast != slow);
+			break;
+		}
+	}
+	return ctr;
+}
+
+bool isPalindromeLL(Node* head){
+	std::stack<int> stack;
+	Node *curr = head;
+	//fill the stack
+	while(curr){
+		stack.push(curr->value);
+		curr = curr ->next;
+	}
+
+	curr =head;
+	for(int i = 0 ; i <stack.size();i++){
+		if(stack.top()!= curr->value){
+			return false;
+		}
+		curr = curr->next;
+		stack.pop();
+	}
+	return true;
+}
+
+Node* groupOddEvenLL(Node* head){
+	if(!head || !head->next) return head;
+
+
+	Node* odd = head;
+    Node* even = head->next;
+    Node* evenHead = even;
+
+	while(even && even->next){
+		odd->next = even->next;
+		odd = odd->next;
+		
+		even->next = odd->next;
+		even = even ->next; 
+	}
+	odd->next = evenHead;
+	return head;
+}
+
+Node* deleteNthEnd(Node* head , int n){
+
+	Node* fakeHead = new Node(0);
+	fakeHead->next = head;
+	Node *fast = fakeHead,*slow=fakeHead;
+	for(int i = 0 ; i <= n ;i++){
+		fast = fast->next;
+	}
+
+	//reach till end
+	while(fast){
+		fast = fast->next;
+		slow = slow->next;
+	}
+
+	Node* temp = slow->next;
+	slow->next = slow->next->next;
+	delete temp;
+
+	head = fakeHead->next;
+	delete fakeHead;
+
+	return head;
+}
+
+//2095. Delete the Middle Node of a Linked List
+Node* deleteMiddle(Node* head){
+	if(!head || !head->next) return nullptr;
+
+
+	Node *fast = head,*slow =head;
+	Node * lastslow = nullptr;
+	//this will put slow at Floor(n/2)
+	while(fast && fast->next){
+		fast=fast->next->next;
+		lastslow = slow;
+		slow=slow->next;
+	}
+	lastslow->next = slow->next;
+	delete slow;
+	return head;
+
+}
+
 int main()
 {
-	Node* root = Vec2LL({1,2,3,4,5,6,7,8});
+	Node* root = Vec2LL({1});
 	
-	// printLL();
-	std::cout << (startingLoop(root) == nullptr )<<std::endl;
+	printLL(root);
+	root = deleteMiddle(root);
+	printLL(root);
+
+	
+	// std::cout << isPalindromeLL(root) <<std::endl;
 
 	return 0;
 }
