@@ -14,6 +14,10 @@ struct Node
 		next = NULL;
 
 	}
+	Node(Node* n){
+		value = n->value;
+		next = n->next;
+	}
 	void print(){
 		std::cout<<value<<"\n";
 	}
@@ -281,13 +285,178 @@ Node* deleteMiddle(Node* head){
 
 }
 
+// Node* sortInsertion(Node* head){
+// 	if(!head || !head->next)return head;
+
+
+//     Node dummy(0);
+//     Node* curr = head;
+
+//     while(curr){
+
+//         Node* next = curr->next;
+//         Node* prev = &dummy;
+
+//         while(prev->next && prev->next->value < curr->value){
+//             prev = prev->next;
+//         }
+
+//         curr->next = prev->next;
+//         prev->next = curr;
+
+//         curr = next;
+//     }
+
+//     return dummy.next;
+
+// }
+
+Node* intersectionNode(Node* ll1 , Node*ll2){
+	Node* h1 = ll1;
+	Node* h2 = ll2;
+
+	while(h1!=h2){
+		h1 = h1->next;
+		h2 = h2->next;
+		if(h1==h2)return h1;
+		if(h1==NULL){
+			h1=ll2;
+		}
+		if(h2==NULL){
+			h2=ll1;
+		}
+	}
+	return h1;
+}
+
+Node* sumLL(Node* A , Node* B){
+	auto iA = A,iB = B;
+	Node* res = new Node(0);//mistake : i was not initializing the headbacknode
+	Node* cr = res;
+	while(iA && iB){
+		int sum = iA->value + iB->value;
+		iA = iA->next;
+		iB = iB->next;
+
+		Node* ne = new Node(sum);
+		cr->next = ne;
+		cr = cr->next;
+	}
+	while(iA){
+		Node* ne = new Node(iA->value);
+		cr->next=ne;
+		cr = cr->next;
+		iA = iA->next;
+	}
+	while(iB){
+		Node* ne = new Node(iB->value);
+		cr->next=ne;
+		cr = cr->next;
+		iB = iB->next;
+	}
+	return res->next;
+}
+
+
+//OPTIMIZE IT
+Node* sumwithCarryLL(Node* A , Node* B){
+	auto iA = A,iB = B;
+	Node* res = new Node(0);//mistake : i was not initializing the headbacknode
+	Node* cr = res;
+	int carry =0;
+	while(iA && iB){
+		int sum = iA->value + iB->value +carry;
+		if(sum >9){
+			carry =1;
+			sum = sum%10;
+		}else{
+			carry =0;
+		}
+		iA = iA->next;
+		iB = iB->next;
+
+		Node* ne = new Node(sum);
+		cr->next = ne;
+		cr = cr->next;
+	}
+	while(iA){
+		int sum = iA->value +carry;
+		if(sum >9){
+			carry =1;
+			sum = sum%10;
+		}else{
+			carry =0;
+		}
+		Node* ne = new Node(sum);
+		cr->next=ne;
+		cr = cr->next;
+		iA = iA->next;
+	}
+	while(iB){
+		int sum = iB->value +carry;
+		if(sum >9){
+			carry =1;
+			sum = sum%10;
+		}else{
+			carry =0;
+		}
+		Node* ne = new Node(sum);
+		cr->next=ne;
+		cr = cr->next;
+		iB = iB->next;
+	}
+	if(carry==1){
+		Node* ne = new Node(carry);
+		cr->next=ne;
+		
+	}
+	return res->next;
+}
+
+Node* rotateRight(Node* head, int k) {
+	if(!head)return NULL;
+    //first i need to find length of ll
+	int len = 1; 
+	Node* temp = head;
+	while(temp->next){
+		temp = temp->next;
+		len++;
+	}
+	// std::cout<<len<<"\n";
+
+	//making it circular
+	temp->next = head;
+
+	//restart temp
+	temp = head;
+	
+	//2. iterate till n-k , 
+	//if k > len we need to mod it to ignore unneseeary cycle rotation
+	int times_rotation_needed = len-(k%(len)) -1;
+	while(times_rotation_needed >0){
+		temp = temp->next;
+		times_rotation_needed --;
+	}
+	//3.store n-k node as head and set n-k-1 node->next as NULL, and ierate it till next->NULL
+	head = temp->next;
+	temp->next = NULL;
+
+	
+	//point next to head
+	return head;
+}
+
+
 int main()
 {
-	Node* root = Vec2LL({1});
+	Node* root1 = Vec2LL({2,4,3,5,6,7,8});
+	Node* root2 = Vec2LL({5,6,4});
+
 	
-	printLL(root);
-	root = deleteMiddle(root);
-	printLL(root);
+	// printLL(root);
+	// Node* root = sumwithCarryLL(root1 , root2);
+	
+	printLL(rotateRight(NULL,3));
 
 	
 	// std::cout << isPalindromeLL(root) <<std::endl;

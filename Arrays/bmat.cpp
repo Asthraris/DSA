@@ -1,6 +1,14 @@
 #include<iostream>
 #include<vector>
+#include<climits>
 
+void printVec(const std::vector<int> &nums){
+    std::cout <<"vector:\n";
+    for(const auto n:nums ){
+        std::cout<<n <<" ,";
+    }
+    std::cout <<"\n";
+}
 
 int max1Row(std::vector<std::vector<int>> matrix = {{1, 1, 1}, {0, 0, 1}, {0, 0, 0}} ){
     // GIVEN : ROW are sorted and only 0 and 1 , just finding the starting pos of one we can find the number of ones in a row
@@ -115,8 +123,51 @@ bool searchMatrix_complex(std::vector<std::vector<int>>matrix ={{1,4,7,11,15},{2
     return false;
 }
 
-int main(){
+int maxElementRow(const std::vector<int> & row){
+    int n = row.size();
+    int max = INT_MIN;
+    int maxC = -1;
+    for(int i = 0 ; i <n ;i++){
+        if(max <row[i]){
+            max=row[i];
+            maxC=i;
+        }
+    }
+    return maxC;
+}
 
-    std::cout<<"final:"<<searchMatrix_complex()<<std::endl;
+std::vector<int> findPeakGrid(const std::vector<std::vector<int>>& mat = {{70,50,40,30,20},{100,1,2,3,4}}) {
+    int m = mat.size();
+    int n = mat[0].size();
+    int low = 0;
+    int high = m-1;
+
+    while(high>=low){
+        int mid = (low+high)/2;
+        int col = maxElementRow(mat[mid]);
+
+        int top = mid-1 >=0 ?mat[mid-1][col] : -1;
+        int bot = mid+1 <m ?mat[mid+1][col]:-1; 
+
+        if(mat[mid][col] >top && mat[mid][col] >bot){
+            return {mid,col};
+        }else if(top > mat[mid][col]){
+            high=mid-1;
+        }else{
+            low = mid+1;
+        }
+    }
+
+    return {-1,-1};
+}
+
+
+
+
+
+int main(){
+    printVec((findPeakGrid()));
+
+    // std::cout<<"final:"<<<<std::endl;
     return 0;
 }
