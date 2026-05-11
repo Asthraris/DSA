@@ -9,6 +9,13 @@
 #include <unordered_map>
 
 
+
+
+
+/*
+    for this problems understand , NSE , PSE , NGE , PGE , PSEE , PGEE , NSEE , NGEE very conceptfully
+*/
+
 using namespace std;
 
 // https://leetcode.com/problems/next-greater-element-ii/
@@ -41,7 +48,7 @@ vector<int> nextGreaterElementsCircular(vector<int>& nums) {
     return res;
 }
 
-vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
+vector<int> findNGE(vector<int>& nums1, vector<int>& nums2) {
 
     // map<int,int> val2NGE;  JUST USING UNORDEREDMAP RESULTED IN 100% from 41% in leetcode in runtime
     unordered_map<int,int> val2NGE;
@@ -340,12 +347,88 @@ string removeKdigits(string num, int k) {
     return ans;
 }
 
+int largestRectangleArea(vector<int>& heights) {
+    int n = heights.size();
+    //good approach but we need to find pse , nse before
+    // vector<int> NSE = findNSE(heights);
+    // vector<int>  PSE= findPSEE(heights);
+    int NSE  , PSE;
+    stack<int> st;
+    int area=0;
+    for( int i = 0 ; i <= n ; i++ )
+    {
+/*Why width is:
+    NSE[i] - PSE[i] - 1
+Suppose:
+    index:    0 1 2 3 4 5
+    height:   2 1 5 6 2 3
+Take:
+    i = 2
+    height = 5
+Bar 5 can extend:
+    left until index 1 because height 1 is smaller
+    right until index 4 because height 2 is smaller
+So:
+    PSE = 1
+    NSE = 4
+Now important part:
+You CANNOT include:
+    index 1
+    index 4
+because both are smaller than height 5.
+You only include:
+    indices: 2 and 3
+    Width:
+    4 - 1 - 1 = 2
+which is correct.
+Why exactly -1
+Because both ends are exclusive.
+Think of it as:
+(PSE , NSE)
+open interval.
+You remove:
+one position for PSE
+one position already accounted in subtraction
+Example:
+PSE = 1
+NSE = 4
+Direct subtraction:
+4 - 1 = 3
+But actual usable bars are:
+2,3
+only 2 bars.
+So:
+4 - 1 - 1 = 2
+*/ 
+        while(!st.empty() &&  (i == n || heights[st.top()] > heights[i]))
+        {
+            int hieght = heights[st.top()];
+            st.pop();
+
+            int width ;
+            if(st.empty()){
+                width = i ;
+            }else {
+                width = i - st.top() - 1;
+            }
+            NSE = i;
+            PSE = st.empty() ? -1 : st.top();
+
+            area = max(area , hieght * width);
+        }
+        st.push(i);
+    }
+    return area;
+}
+
+
 int main(){
+    
     // vector<int> a = {2,4};
-    vector<int> b = {3,1,2,4};
+    vector<int> b = {2,4};
     // vector<int> c = asteroidCollision(b);
     // for(auto n :c)cout<<n<<" ";
 
-    cout<< sumSubarrayMins(b);
+    cout<< largestRectangleArea(b);
     return 0;
 }
