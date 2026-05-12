@@ -2,6 +2,27 @@
 
 using namespace std;
 
+// HINT : CACHE PROBLEMS WILL ALWAYS USE LL AND HASHMAPS 
+// industry standards uses minheap more than LL but very complex for now
+// cause we need O[1] lookup ,insertion,update
+
+
+/*
+Most advanced cache questions reduce to:
+    HashMap + another DS
+where hashmap gives:
+    identity
+    direct access
+and second DS manages:
+    ordering -> dll
+    frequency -> bucket -dll
+    expiry  ->
+    randomness ->vector
+    priority   ->
+*/
+
+
+
 struct node{
     // nodes do need to store their frequency , so we know which frequency bucket it currently belongs to , & shift them accordingly 
     // its not needed in normal LRU so not gonna use that but lets keep both same strcut for better code readablity
@@ -106,6 +127,7 @@ public:
 };
 
 
+//  BUCKET Datastrcuture : since there can be multiple data having freq same 
 
 class LFUCache {
 //CANLLENGES : 
