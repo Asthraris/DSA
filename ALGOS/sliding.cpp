@@ -174,10 +174,214 @@ int fruitsBasket(vector<int>& farm , int num_baskets=2)
     return maxFruits;
 }
 
+//i mean like i have done mostly SImilar ie maxOnes , only diff there are more values i need to see , like if A is more than A else B
+int characterReplacement(string s, int k) {
+    int n = s.length();
+    //BLOCK 1 : how do i tell which char we considering like i can do for both A & B causing 2*O[n] and then return the max length but if tghe question has multiple chars instaed of 2 it will scale vertically
+    int left = 0 , right ;
+    // Tracks the count of the most frequent character in current window
+    int maxCHAR = 0 ;
+
+    // Stores the maximum length of valid window
+    int maxWIN = 0;
+    // char
+    //SINCE UNLIKE LC I DONT HAVE CLEAR STATEMENT TAHT STR ONLY CONTAINS 2 CHARS
+    //CONSIDERING S CONTAINS ONLY CAPS LETTERS
+    vector<int> freq(26,0);
+    for(right = 0 ; right <n ; right ++)
+    {
+        freq[s[right]-'A']++;
+        maxCHAR = max( maxCHAR , freq[s[right]- 'A'] );
+
+        //till window size minus maxCount yet [doesnt matter which char is dominant/consdered] is greater than num_of_replacements, we need to scrink left 
+        while((right-left+1) - maxCHAR > k){
+            freq[s[left]-'A']--;
+            left++;
+            //FIND THE REASONING
+//             what if dominant char was at left
+// and we removed it?
+
+// Then:
+
+// actual max frequency inside window decreases
+// but maxCHAR variable does NOT decrease
+
+// Correct.
+
+// And surprisingly:
+
+// we intentionally allow that.
+        }
+        maxWIN = max( maxWIN , right - left + 1 );
+        
+    }
+    return maxWIN;
+}
+
+//ngl ye mujhe video ke baad bhi samj nhi aya
+int numSubarraysWithSum(vector<int>& nums, int goal) {
+    //Sliding window
+    //MY TRY : WRONG CAUSE IT ISNT CHECK ALL THE POSSSIBLE SUBARRAYS LIKE 001 , 01 , 1 , IT WILL JUST consider 1,10,100
+    //window status 
+    auto helper = [](vector<int>& nums , int goal){
+        if(goal<0)return 0;
+        int n = nums.size();
+        int curr_sum =0 ;
+        int total_sum=0;
+        int left =0 , right =0;
+        while(right<n)
+        {
+            
+            curr_sum += nums[right];
+            
+            while(left < n && curr_sum>goal){
+                curr_sum -= nums[left];
+                left++;
+            }
+                // if(curr_sum == goal)total_sum++;
+            total_sum +=  (right -left +1);
+            right++;
+            
+        }
+        return total_sum;
+    };
+
+
+
+
+    return helper(nums,goal) - helper(nums,goal-1) ;
+}
+
+int numberOfSubarrays(vector<int>& nums, int k) {
+
+//I mean i just need to understand this working of subarrays part , slidingwin part is clear for me 
+//simple sliding window , adj data
+//one window status
+// one right , one lft 
+// iter right till n , so changes to windowStatus upon some conditions
+// check window validity if not , scrink left till valid again
+// store , process data 
+    auto helper = [](vector<int>& nums , int goal){
+        if(goal<0)return 0;
+        int n = nums.size();
+        int num_odds =0 ;
+        int total_sum=0;
+        int left =0 , right =0;
+        while(right<n)
+        {
+            if(nums[right]%2 != 0)num_odds++;
+            
+            while(left < n && num_odds>goal){
+                if(nums[left]%2 != 0 ) num_odds--;
+                left++;
+            }
+                // if(curr_sum == goal)total_sum++;
+            total_sum +=  (right -left +1);
+            right++;
+            
+        }
+        return total_sum;
+    };
+
+    return helper(nums,k) - helper(nums,k-1) ;
+}
+
+int numberOfSubstrings(string s) 
+{
+    
+    int n = s.length();
+    //winstatus , since i know s only has 3 small "abc" we can take 3 booleans
+    int status[3] = {0,0,0};
+    auto checkWindowValidity = [](int status[3]){
+        //only valid if all char exist once alteast
+        return ( status[0] > 0 && status[1] > 0  && status[2] > 0 );
+    };
+    int left =0 , right =0;
+    int count =0;
+    while(right<n)
+    {
+        status[s[right] - 'a']++;
+            
+        while(left < n && checkWindowValidity(status)){
+            count += n - right;
+            status[s[left] - 'a']--;
+            left++;
+        }
+        //  if(curr_sum == goal)total_sum++;
+        right++;
+            
+    }
+    return count;
+}
+
+int maxScore_BRUTE(vector<int>& cardPoints, int k) {
+    int n = cardPoints.size();
+    int maxScore = 0;
+    // we can select cards adjacendlty and only from both sides not middle
+    
+    // we can iter over k and then skip less card from left side and alternatively add one card from back
+
+    for(int left_take = 0 ; left_take <= k ; left_take++)
+    {
+        int right_take = k-left_take;
+        //this will iter k times simulation decrement of one side values
+        int currScore = 0;
+        //first we will 
+        for(int i = 0 ; i <left_take ; i++){
+            currScore += cardPoints[i];
+        }
+
+        for(int i = n-right_take ; i<n ; i++){
+            currScore += cardPoints[i];
+        }
+        maxScore = max(currScore , maxScore);
+    }
+    return maxScore;
+}
+
+int maxScore(vector<int>& cardPoints,int k){
+    //GREEDY is wrong here
+                // int n = cardPoints.size();
+                // //sliding window but i can keep two diff ptrs at both ends and expand conditionally
+                // int left =  0;
+                // int right = n-1;
+                // int maxScore =0;
+                // //we have total k times we can pick an card
+                // for (int  pick = 0; pick < k; pick++)
+                // {
+                //     //decide which to select left or right , maybe greedy works best in this case
+                // }
+                
+                // return maxScore;
+    
+
+    //Real 
+    int n = cardPoints.size();
+    int currScore =0,maxScore =0;
+    //we are going with 2*n by initially taking all first k cards then individually see all sums by removing one and adding one from back
+    for(int lefthand = 0 ; lefthand < k ;lefthand++ )     
+    {
+        currScore += cardPoints[lefthand];
+    }       
+    maxScore = currScore;
+    for(int righthand = 0 ; righthand < k; righthand++)
+    {
+        //k-1 for 0th inxed noramlization
+        currScore -= cardPoints[k-1-righthand];
+        currScore += cardPoints[n-1-righthand];
+        maxScore = max(maxScore , currScore);
+
+    }
+    return maxScore;
+
+}
+
 
 int main()
 {
-    vector<int> n = {1,2,2,3,3};
-    cout<< fruitsBasket(n);
+    vector<int> n = {1,2,3,4,5,6,1};
+    // string s = "abcba";
+
+    cout<< maxScore_BRUTE(n,3);
     return 0;
 }
